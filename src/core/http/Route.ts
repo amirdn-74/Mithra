@@ -53,7 +53,7 @@ export class Route {
     return this;
   }
 
-  middleware(cb: () => void): this {
+  middleware(middlewares: Middleware | Middleware[]): this {
     return this;
   }
 
