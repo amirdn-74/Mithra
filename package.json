@@ -8,7 +8,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "",
-    "dev": "tsx watch index.ts",
+    "sandbox": "tsx watch ./sandbox/sandbox.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {

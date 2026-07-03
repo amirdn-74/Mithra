@@ -34,7 +34,7 @@ export class ServiceContainer {
     );
   }
 
-  instance<T extends Injectable>(injectable: T): T {
+  bindInstance<T extends Injectable>(injectable: T): T {
     const constructor = injectable.constructor as InjectableConstructor<T>;
     this.services.set(constructor.injectionName, injectable);
 
