@@ -1,3 +1,4 @@
+import express, { type Express } from "express";
 import type {
   Injectable,
   InjectableConstructor,
@@ -8,20 +9,39 @@ import type { AppConfigOptions } from "./contracts/AppConfigOptions.js";
 export class Application {
   protected static _instance: Application;
   protected container: ServiceContainer;
-
   protected configOptions!: AppConfigOptions;
+
+  protected _app!: Express;
 
   private constructor(options?: AppConfigOptions) {
     this.setConfigOptions(options);
     this.container = ServiceContainer.getContainer();
+    this.createBaseApp();
   }
 
-  static create(options?: AppConfigOptions) {
-    return (Application._instance ??= new Application(options));
+  static create(options?: AppConfigOptions): Application {
+    if (!Application._instance)
+      Application._instance = new Application(options);
+
+    return Application._instance;
+  }
+
+  protected createBaseApp() {
+    this._app = express();
   }
 
   static get instance(): Application {
+    if (!Application._instance) {
+      throw new Error(
+        "Application has not been created yet. Call Application.create() first.",
+      );
+    }
+
     return Application._instance;
+  }
+
+  static get baseApp(): Express {
+    return Application.instance._app;
   }
 
   protected setConfigOptions(options?: AppConfigOptions) {
@@ -70,5 +90,13 @@ export class Application {
     injected: InjectableConstructor<T>,
   ): void {
     Application.instance.container.forget(injected);
+  }
+
+  middlewares() {
+    //
+  }
+
+  run(port: number, cb?: () => void) {
+    this._app.listen(port, cb);
   }
 }
