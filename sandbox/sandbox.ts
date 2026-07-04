@@ -1,18 +1,21 @@
 import { Application } from "../src/core/application/Application.js";
-import { Route } from "../src/core/http/Route.js";
+import { Router } from "../src/core/routing/Router.js";
+import { TestMiddleware } from "./middlewares/TestMiddleware.js";
 
 const app = Application.create();
 
-const route = new Route();
+const route = new Router();
 
-route.get("/", (req, res) => {});
-route.post("/", (req, res) => {});
-route.get("/test", (req, res) => {});
+// route.prefix("sss").get("/", (req, res) => {});
 
-route.group(() => {
-    route.patch('/group-test', () => {});
-});
-
-route.get('/after-group', () => {});
-
-route.peek();
+route
+  .prefix("/ssss")
+  .middleware(TestMiddleware)
+  .name("test.")
+  .group(() => {
+    route
+      .middleware([TestMiddleware])
+      .prefix("/pre")
+      .get("/home", () => {})
+      .name("afteri");
+  });
