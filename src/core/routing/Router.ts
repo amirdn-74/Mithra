@@ -16,6 +16,7 @@ import { Request } from "../http/Request.js";
 import { Response } from "../http/Response.js";
 import { RouteRecord } from "./RouteRecord.js";
 import type { Constructor } from "../../common/contracts/Constructor.js";
+import { NotFoundException } from "../exceptions/NotFoundException.js";
 
 export class Router {
   protected static _routes: RouteObject[] = [];
@@ -103,6 +104,8 @@ export class Router {
       );
 
       Application.baseApp[route.method](route.path, middlewares, route.handler);
+
+      Router.handleundefinedRoute();
     });
   }
 
@@ -176,5 +179,14 @@ export class Router {
     });
 
     return _normalizedMiddlewares;
+  }
+
+  protected static handleundefinedRoute() {
+    Application.baseApp.use((req, res) => {
+      const method = req.method.toUpperCase();
+      const url = req.url;
+
+      throw new NotFoundException(`undefined route: ${method} ${url}`);
+    });
   }
 }

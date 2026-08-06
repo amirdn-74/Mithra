@@ -1,5 +1,6 @@
 import { Injectable } from "../container/Injectable.js";
 import { type Request as ExpressRequest, type NextFunction } from "express";
+import { Exception } from "../exceptions/Exception.js";
 
 export class Request extends Injectable {
   protected _vault: Map<string, unknown> = new Map();
@@ -111,5 +112,9 @@ export class Request extends Injectable {
     this._vault.delete(key);
 
     return value;
+  }
+
+  abort(status: number, message?: string, body?: any) {
+    throw new Exception(message, body, status);
   }
 }

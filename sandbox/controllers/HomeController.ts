@@ -5,12 +5,12 @@ import type { Response } from "../../src/core/http/Response.js";
 export class HomeController extends Controller {
   protected name = "";
 
-  index(req: Request | undefined, res: Response | undefined) {
+  index(req: Request, res: Response) {
     this.doSomething();
 
-    console.log(req?.baseUrl);
+    req.abort(400);
 
-    res?.json("hi " + this.name);
+    res.json("hi " + this.name);
   }
 
   protected doSomething() {

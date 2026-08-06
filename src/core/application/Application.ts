@@ -1,4 +1,9 @@
-import express, { type Express } from "express";
+import express, {
+  type Express,
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import type {
   Injectable,
   InjectableConstructor,
@@ -8,6 +13,7 @@ import type { AppConfigOptions } from "./contracts/AppConfigOptions.js";
 import { Router } from "../routing/Router.js";
 import type { Middleware } from "../http/contracts/Middleware.js";
 import type { Constructor } from "../../common/contracts/Constructor.js";
+import { BaseException } from "../exceptions/BaseException.js";
 
 export class Application {
   protected static _instance: Application;
@@ -115,6 +121,30 @@ export class Application {
 
   run(port: number, cb?: () => void) {
     Router.registerRoutes();
+
+    this.registerExceptionHandler();
+
     this._app.listen(port, cb);
+  }
+
+  protected registerExceptionHandler() {
+    this._app.use(
+      (err: Error, req: Request, res: Response, next: NextFunction) => {
+        let status = 500;
+        let message: string | undefined = "Something went wrong!";
+        let body = err.stack;
+
+        if (err instanceof BaseException) {
+          status = err.getStatus();
+          message = err.getMessage();
+          body = err.getBody();
+        }
+
+        res.status(status).json({
+          message,
+          body,
+        });
+      },
+    );
   }
 }
