@@ -5,11 +5,16 @@ import type {
 } from "../container/Injectable.js";
 import { ServiceContainer } from "../container/ServiceContainer.js";
 import type { AppConfigOptions } from "./contracts/AppConfigOptions.js";
+import { Router } from "../routing/Router.js";
+import type { Middleware } from "../http/contracts/Middleware.js";
+import type { Constructor } from "../../common/contracts/Constructor.js";
 
 export class Application {
   protected static _instance: Application;
   protected container: ServiceContainer;
   protected configOptions!: AppConfigOptions;
+  protected routesBag: Router[] = [];
+  protected globalMiddlewaresBag: Constructor<Middleware>[] = [];
 
   protected _app!: Express;
 
@@ -92,11 +97,24 @@ export class Application {
     Application.instance.container.forget(injected);
   }
 
-  middlewares() {
-    //
+  routes(routes: Router[]) {
+    this.routesBag = routes;
+
+    return this;
+  }
+
+  middlewares(middlewares: Constructor<Middleware>[]) {
+    this.globalMiddlewaresBag = middlewares;
+
+    return this;
+  }
+
+  getRoutesList() {
+    return Router.getRouteList();
   }
 
   run(port: number, cb?: () => void) {
+    Router.registerRoutes();
     this._app.listen(port, cb);
   }
 }

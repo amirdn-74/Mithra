@@ -29,11 +29,9 @@ export class Router {
   };
 
   protected _baseRouter: ExpressRouter;
-  protected _app: Application;
 
   constructor(options?: RouterOptions) {
     this._baseRouter = express.Router({ strict: true });
-    this._app = Application.instance;
   }
 
   get(path: string, handler: RouteHandler): RouteRecord {
@@ -98,13 +96,13 @@ export class Router {
     return this;
   }
 
-  registerRoutes() {
+  static registerRoutes() {
     Router._routes.forEach((route) => {
       Application.baseApp[route.method](route.path, [], route.handler);
     });
   }
 
-  getRouteList(): RouteObject[] {
+  static getRouteList(): RouteObject[] {
     return Router._routes;
   }
 
@@ -161,7 +159,7 @@ export class Router {
   ): RequestHandler[] {
     const _normalizedMiddlewares: RequestHandler[] = [];
 
-    middlewares.forEach(middleware => {
+    middlewares.forEach((middleware) => {
       //
     });
 
