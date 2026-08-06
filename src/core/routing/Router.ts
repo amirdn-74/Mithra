@@ -104,9 +104,9 @@ export class Router {
       );
 
       Application.baseApp[route.method](route.path, middlewares, route.handler);
-
-      Router.handleundefinedRoute();
     });
+
+    Router.handleundefinedRoute();
   }
 
   static getRouteList(): RouteObject[] {

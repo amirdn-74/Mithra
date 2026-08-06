@@ -8,8 +8,6 @@ export class HomeController extends Controller {
   index(req: Request, res: Response) {
     this.doSomething();
 
-    req.abort(400);
-
     res.json("hi " + this.name);
   }
 
