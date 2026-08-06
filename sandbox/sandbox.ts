@@ -6,5 +6,3 @@ const app = Application.create();
 app
   .routes([appRoutes])
   .run(4000, () => console.log("Node is running on port 4000"));
-
-console.log(app.getRoutesList());

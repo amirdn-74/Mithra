@@ -98,7 +98,11 @@ export class Router {
 
   static registerRoutes() {
     Router._routes.forEach((route) => {
-      Application.baseApp[route.method](route.path, [], route.handler);
+      const middlewares = Router.normalizeMiddlewaresToExpressMiddleware(
+        route.middlewares || [],
+      );
+
+      Application.baseApp[route.method](route.path, middlewares, route.handler);
     });
   }
 
@@ -154,13 +158,21 @@ export class Router {
     return new RouteRecord(route);
   }
 
-  protected normalizeMiddlewaresToExpressMiddleware(
+  protected static normalizeMiddlewaresToExpressMiddleware(
     middlewares: Constructor<Middleware>[],
   ): RequestHandler[] {
     const _normalizedMiddlewares: RequestHandler[] = [];
 
     middlewares.forEach((middleware) => {
-      //
+      const _handler = (
+        req: ExpressRequest,
+        res: ExpressResponse,
+        next: NextFunction,
+      ) => {
+        new middleware().handle(new Request(req, next), new Response(res));
+      };
+
+      _normalizedMiddlewares.push(_handler);
     });
 
     return _normalizedMiddlewares;

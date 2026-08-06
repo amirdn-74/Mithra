@@ -8,6 +8,8 @@ export class HomeController extends Controller {
   index(req: Request | undefined, res: Response | undefined) {
     this.doSomething();
 
+    console.log(req?.baseUrl);
+
     res?.json("hi " + this.name);
   }
 
